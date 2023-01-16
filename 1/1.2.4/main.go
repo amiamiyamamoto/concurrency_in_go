@@ -19,7 +19,7 @@ func main() {
 		fmt.Printf("sum=%v\n", v1.value+v2.value)
 	}
 
-	var a, b, value
+	var a, b value
 	wg.Add(2)
 	go printSum(&a, &b)
 	go printSum(&b, &a)
