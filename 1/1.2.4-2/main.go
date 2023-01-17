@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -23,5 +24,17 @@ func main() {
 
 	tryDir := func(dirName string, dir *int32, out *bytes.Buffer) bool {
 		fmt.Fprintf(out, "%v", dirName)
+		atomic.AddInt32(dir, 1)
+		takeStep()
+		if atomic.LoadInt32(dir) == 1 {
+			fmt.Fprint(out, ". Success!")
+			return true
+		}
+		takeStep()
+		atomic.AddInt32(dir, -1)
+		return false
 	}
+	var left, right int32
+	tryLeft := func(out *bytes.Buffer) bool { return tryDir("left", &left, out) }
+	tryRight := func(out *bytes.Buffer) bool { return tryDir("right", &right, out) }
 }
